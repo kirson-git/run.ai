@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: triton-client-v100-inception
+  namespace: default
+  labels:
+    name: triton-client-v100-inception
+spec:
+  containers:
+  - name: triton-client
+    image: gshaibi/triton-client
+    command:
+    - "perf_analyzer"
+    - "-m"
+    - "inception_graphdef"
+    - "--request-rate-range"
+    - "30"
+    - "-p"
+    - "3600000"
+    - "-u"
+    - "triton-server-v100-inception-00001-private.runai-project-a"
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"

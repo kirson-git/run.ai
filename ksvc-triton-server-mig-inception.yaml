@@ -1,0 +1,34 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  annotations:
+  name: triton-server-mig-inception
+  namespace: runai-project-b
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/min-scale: "1"
+        autoscaling.knative.dev/max-scale: "1"
+        nvidia.com/mig-3g.20gb: "1"
+      labels:
+        project: project-b
+    spec:
+      containers:
+      - image: nvcr.io/nvidia/tritonserver:20.12-py3
+        args:
+        - tritonserver
+        - --model-repository=/models
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - mountPath: /models/
+          name: triton-inception-model
+        resources:
+          requests:
+            cpu: "1"
+      schedulerName: runai-scheduler
+      volumes:
+      - hostPath:
+          path: /var/local/triton-models/inception
+        name: triton-inception-model
